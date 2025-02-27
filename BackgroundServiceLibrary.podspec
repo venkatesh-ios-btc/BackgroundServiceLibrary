@@ -1,10 +1,3 @@
-//
-//  Untitled.swift
-//  BackgroundServiceLibrary
-//
-//  Created by Venkatesh on 27/02/25.
-//
-
 Pod::Spec.new do |s|
   s.name         = "BackgroundServiceLibrary"
   s.version      = "1.0.0"
