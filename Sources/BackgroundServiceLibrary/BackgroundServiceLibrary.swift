@@ -196,7 +196,7 @@ public class BackgroundService: NSObject, CLLocationManagerDelegate {
         }
     }
     
-    private func fetchDataFromAPI() {
+    public func fetchDataFromAPI() {
         guard let url = URL(string: "https://jsonplaceholder.typicode.com/todos/1") else { return }
         let apiTask = URLSession.shared.dataTask(with: url) { data, response, error in
             if let data = data,
