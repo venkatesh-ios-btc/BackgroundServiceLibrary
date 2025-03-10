@@ -171,19 +171,28 @@ public class BackgroundService: NSObject, CLLocationManagerDelegate {
     
     private func scheduleBackgroundAPICall() {
         let taskIdentifier = "com.background.api.fetch"
-        // Register the task with BGTaskScheduler.
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: taskIdentifier, using: nil) { task in
-            self.fetchDataFromAPI()
-            task.setTaskCompleted(success: true)
-        }
-        do {
-            let request = BGProcessingTaskRequest(identifier: taskIdentifier)
-            request.requiresNetworkConnectivity = true
-            request.earliestBeginDate = Date(timeIntervalSinceNow: 60) // 1 minute delay
-            try BGTaskScheduler.shared.submit(request)
-            print("Scheduled Background API Fetch")
-        } catch {
-            print("Failed to schedule API fetch: \(error.localizedDescription)")
+        
+        // Ensure BGTaskScheduler is only used on iOS 13 and later
+        if #available(iOS 13.0, *) {
+            BGTaskScheduler.shared.register(forTaskWithIdentifier: taskIdentifier, using: nil) { task in
+                self.fetchDataFromAPI()
+                task.setTaskCompleted(success: true)
+            }
+            
+            do {
+                let request = BGProcessingTaskRequest(identifier: taskIdentifier)
+                request.requiresNetworkConnectivity = true
+                request.earliestBeginDate = Date(timeIntervalSinceNow: 60) // 1-minute delay
+                
+                try BGTaskScheduler.shared.submit(request)
+                print("Scheduled Background API Fetch")
+            } catch {
+                print("Failed to schedule API fetch: \(error.localizedDescription)")
+            }
+        } else {
+            print("BGTaskScheduler is not supported on this iOS version.")
+            // Fallback: Execute API fetch immediately for older iOS versions
+            fetchDataFromAPI()
         }
     }
     
